@@ -79,6 +79,7 @@ void lcd_i2c_init (void)
 	lcd_i2c_cmd(0x06);		// Entry mode: Increment.
 	lcd_i2c_cmd(0x80);		// points to DDRAM.
 	lcd_i2c_cmd(0xC0);
+	lcd_i2c_cmd(0x40);
 }
 
 /*	display character	*/
@@ -156,13 +157,13 @@ void lcd_i2c_desl(const char * text){
 	}
 		else if (pos==32){
 			lcd_i2c_cmd(0x01); 
-			_delay_ms(5);
+			_delay_ms(100);
 			lcd_i2c_cmd(0x80);
 			pos=0;
 	}
 
 	lcd_i2c_data(text[i]);
-	_delay_ms(120);
+	_delay_ms(200);
 	pos++;
 		}
 		return 0;	
@@ -180,3 +181,37 @@ void LCD_Custom_Char (unsigned char loc, unsigned char *msg)
            lcd_i2c_data(msg[i]);      
     }   
 }
+void LCD_clr(void)
+{
+	lcd_i2c_cmd(0x01); //clear LCD (0000 0001)
+	_delay_ms(10);
+}
+
+void lcd_i2c_movimiento_carcter(void){
+	char i;
+	unsigned char Character2[8] = { 0x04, 0x02, 0x1E, 0x0F, 0x0F, 0x1E, 0x02, 0x04 };
+	unsigned char Character1[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	unsigned char Character3[8] = { 0x00, 0x00, 0x00, 0x04, 0x1F, 0x0E, 0x0E, 0x0A };
+	unsigned char Character4[8] = { 0x04, 0x08, 0x0F, 0x1E, 0x1E, 0x0F, 0x08, 0x04 };
+	unsigned char Character5[8] = { 0x0A, 0x0E, 0x0E, 0x1F, 0x04, 0x00, 0x00, 0x00 };
+	LCD_Custom_Char(0, Character1);
+	LCD_Custom_Char(1, Character1);
+	LCD_Custom_Char(2, Character1);
+	LCD_Custom_Char(3, Character2);
+	_delay_ms(2000);
+	LCD_Custom_Char(3, Character3);
+	_delay_ms(2000);
+	LCD_Custom_Char(3, Character4);
+	_delay_ms(2000);
+	LCD_Custom_Char(3, Character5);
+	_delay_ms(2000);
+	LCD_Custom_Char(4, Character1);
+	LCD_Custom_Char(5, Character1);
+	LCD_Custom_Char(6, Character1);
+	LCD_Custom_Char(7, Character1);
+	lcd_i2c_cmd(0xC0);
+	for (int i=0;i<8; i++){
+		lcd_i2c_data(i);		/* char at 'i'th position will display on lcd */
+		lcd_i2c_data(' ');		/* space between each custom char. */
+	}
+	}
